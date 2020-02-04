@@ -66,7 +66,6 @@ public class Product {
             carry = digitSum / 10;
         }
         long end = System.nanoTime();
-        System.out.println("Time taken to sum: " + (end - start));
         return carry > 0 ? carry + sum : sum;
     }
 
@@ -75,15 +74,17 @@ public class Product {
         String second = NumberUtils.randomNumber(9999);
         System.out.println("Product of");
         System.out.println(first);
+        System.out.println("X");
         System.out.println(second);
         long start = System.nanoTime();
         String compute = Product.compute(first, second);
         long end = System.nanoTime();
+        System.out.println("=");
+        System.out.println(compute);
         System.out.println("Took nanos my multiplication: " + (end - start));
         start = System.nanoTime();
-        String bigIntResult = new BigInteger(first).multiply(new BigInteger(second)).toString();
+        new BigInteger(first).multiply(new BigInteger(second)).toString();
         end = System.nanoTime();
         System.out.println("Took nanos bigint: " + (end - start));
-        System.out.println(bigIntResult.equals(compute));
     }
 }
