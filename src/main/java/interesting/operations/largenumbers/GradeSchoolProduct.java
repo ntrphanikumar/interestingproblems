@@ -4,15 +4,15 @@ import static interesting.operations.largenumbers.NumberUtils.randomNumber;
 import static interesting.operations.largenumbers.NumberUtils.sum;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class GradeSchoolProduct implements Product {
 
-    private static final char CHAR_ZERO = '0', CHAR_SPACE = ' ';
+    private static final String LEN9_SPACES_STR = "         ";
+    private static final String LEN9_ZEROS_STR = "000000000";
     private static final int MAX_SAFE_LENGTH = (Long.MAX_VALUE + "").length() - 1;
 
     @Override
@@ -27,33 +27,51 @@ public class GradeSchoolProduct implements Product {
         long end = System.nanoTime();
         System.out.println("Block generation took: " + (end - start));
         start = System.nanoTime();
-        List<String> numberToSum = new ArrayList<>();
+        Map<Integer, Long> numberByPow10Multiplier = new TreeMap<>();
         for (int i = 0; i < multiplierBlocks.size(); i++) {
             for (int j = 0; j < multiplicandBlocks.size(); j++) {
-                String product = String.valueOf(multiplicandBlocks.get(j) * multiplierBlocks.get(i));
-                int rightZeros = multiplierBlocks.size() + multiplicandBlocks.size() - i - j - 2;
-                if (rightZeros > 0) {
-                    String format = "%1$-" + (product.length() + (rightZeros * blockLength)) + "s";
-                    numberToSum.add(String.format(format, product).replace(CHAR_SPACE, CHAR_ZERO));
-                } else {
-                    numberToSum.add(product);
+                long product = multiplicandBlocks.get(j) * multiplierBlocks.get(i);
+                if (product > 0) {
+                    int pow10Multiplier = (multiplierBlocks.size() + multiplicandBlocks.size() - i - j - 2)
+                            * blockLength;
+                    numberByPow10Multiplier.put(pow10Multiplier,
+                            numberByPow10Multiplier.getOrDefault(pow10Multiplier, 0l) + product);
                 }
             }
         }
         end = System.nanoTime();
-        System.out.println("Number list for sum generation took: " + (end - start));
-        return sum(numberToSum, multiplier.length() + multiplicand.length());
+        System.out.println("Power map generation took: " + (end - start));
+
+        start = System.nanoTime();
+        int maxLength = 0;
+        List<String> numbersToSum = new ArrayList<>();
+        StringBuilder suffix = new StringBuilder(LEN9_ZEROS_STR);
+        for (Entry<Integer, Long> entry : numberByPow10Multiplier.entrySet()) {
+            StringBuilder strval = new StringBuilder(entry.getValue().toString());
+            if (entry.getKey() > 0) {
+                strval.append(suffix);
+                suffix.append(LEN9_ZEROS_STR);
+            }
+            numbersToSum.add(strval.toString());
+            maxLength = Math.max(maxLength, strval.length());
+        }
+        end = System.nanoTime();
+        System.out.println("Number list from power map for sum generation took: " + (end - start));
+        return sum(numbersToSum, maxLength);
     }
 
     private List<Long> splitToBlocks(String number, int blockLength) {
         String paddedNumber = addLeftPadding(number, blockLength);
-        return IntStream.range(0, paddedNumber.length() / blockLength)
-                .mapToObj(idx -> paddedNumber.substring(blockLength * (idx), blockLength * (idx + 1)).trim())
-                .map(n -> n.length() == 0 ? 0 : Long.parseLong(n)).collect(Collectors.toList());
+        List<Long> blocks = new ArrayList<>();
+        for (int i = 0; i < paddedNumber.length(); i += blockLength) {
+            blocks.add(Long.parseLong(paddedNumber.substring(i, i + blockLength).trim()));
+        }
+        return blocks;
     }
 
     private String addLeftPadding(String number, int blockLength) {
-        return String.format("%" + (number.length() + blockLength - (number.length() % blockLength)) + "s", number);
+        return number.length() % blockLength == 0 ? number
+                : (LEN9_SPACES_STR + number).substring(number.length() % blockLength);
     }
 
     public static void main(String[] args) {

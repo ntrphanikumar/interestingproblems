@@ -1,10 +1,11 @@
 package interesting.operations.largenumbers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class NumberUtils {
-    private static final char CHAR_ZERO = '0', CHAR_SPACE = ' ';
+    private static final char CHAR_ZERO = '0';
 
     public static String randomNumber(int size) {
         int leftLimit = '0', rightLimit = '9';
@@ -30,7 +31,6 @@ public class NumberUtils {
         }
         sum = carry > 0 ? carry + sum : sum;
         long end = System.nanoTime();
-//        System.out.println("Numbers to Sum: " + numbers);
         System.out.println("Sum of " + numbers.size() + " took: " + (end - start));
         return sum;
     }
