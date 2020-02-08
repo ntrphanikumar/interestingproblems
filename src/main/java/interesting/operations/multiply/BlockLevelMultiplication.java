@@ -7,19 +7,22 @@ import java.util.Map;
 
 public class BlockLevelMultiplication {
 
-    private static final int BLOCK_SIZE = 7;
-    private static final long TEN_POW_BLOCKSIZE = (long) Math.pow(10d, (double) BLOCK_SIZE);
-    private static final String LEN_BLOCKSIZE_ZEROS_STR = String.valueOf(TEN_POW_BLOCKSIZE).substring(1);
-    private static final String LEN_BLOCKSIZE_SPACES_STR = LEN_BLOCKSIZE_ZEROS_STR.replace('0', ' ');
     private static final int MAX_SAFE_LENGTH = 19;
 
     public String compute(String multiplier, String multiplicand) {
-        if (multiplier.length() + multiplicand.length() <= MAX_SAFE_LENGTH) {
+        int totalLength = multiplier.length() + multiplicand.length();
+        if (totalLength <= MAX_SAFE_LENGTH) {
             return String.valueOf(Long.parseLong(multiplier) * Long.parseLong(multiplicand));
         }
+
+        int blockSize = determineBlockSize(multiplier, multiplicand);
+        long pow10BlockSize = (long) Math.pow(10d, (double) blockSize);
+        String blockSizeZerosStr = String.valueOf(pow10BlockSize).substring(1);
+        String blockSizeSpacesStr = blockSizeZerosStr.replace('0', ' ');
+
 //        long start = System.nanoTime();
-        List<Long> multiplierBlocks = splitToBlocks(multiplier);
-        List<Long> multiplicandBlocks = splitToBlocks(multiplicand);
+        List<Long> multiplierBlocks = splitToBlocks(multiplier, blockSize, blockSizeSpacesStr);
+        List<Long> multiplicandBlocks = splitToBlocks(multiplicand, blockSize, blockSizeSpacesStr);
 //        long end = System.nanoTime();
 //        System.out.println("Block generation took: " + (end - start));
 
@@ -48,11 +51,11 @@ public class BlockLevelMultiplication {
                 values[maxPow - pow] = sum == 0 ? "" : String.valueOf(sum);
                 break;
             }
-            long sum = carry + (numberByPow10Multiplier.get(pow) % TEN_POW_BLOCKSIZE);
-            carry = (numberByPow10Multiplier.get(pow) / TEN_POW_BLOCKSIZE) + (sum / TEN_POW_BLOCKSIZE);
-            String value = String.valueOf(sum % TEN_POW_BLOCKSIZE);
-            if (pow < maxPow && value.length() < BLOCK_SIZE) {
-                value = LEN_BLOCKSIZE_ZEROS_STR.substring(value.length()) + value;
+            long sum = carry + (numberByPow10Multiplier.get(pow) % pow10BlockSize);
+            carry = (numberByPow10Multiplier.get(pow) / pow10BlockSize) + (sum / pow10BlockSize);
+            String value = String.valueOf(sum % pow10BlockSize);
+            if (pow < maxPow && value.length() < blockSize) {
+                value = blockSizeZerosStr.substring(value.length()) + value;
             }
             values[maxPow - pow] = value;
         }
@@ -60,17 +63,21 @@ public class BlockLevelMultiplication {
         return String.join("", values);
     }
 
-    private List<Long> splitToBlocks(String number) {
-        String paddedNumber = addLeftPadding(number);
+    private List<Long> splitToBlocks(String number, int blockSize, String blockSizeSpacesStr) {
+        String paddedNumber = addLeftPadding(number, blockSize, blockSizeSpacesStr);
         List<Long> blocks = new ArrayList<>();
-        for (int i = 0; i < paddedNumber.length(); i += BLOCK_SIZE) {
-            blocks.add(Long.parseLong(paddedNumber.substring(i, i + BLOCK_SIZE).trim()));
+        for (int i = 0; i < paddedNumber.length(); i += blockSize) {
+            blocks.add(Long.parseLong(paddedNumber.substring(i, i + blockSize).trim()));
         }
         return blocks;
     }
 
-    private String addLeftPadding(String number) {
-        return number.length() % BLOCK_SIZE == 0 ? number
-                : (LEN_BLOCKSIZE_SPACES_STR + number).substring(number.length() % BLOCK_SIZE);
+    private String addLeftPadding(String number, int blockSize, String blockSizeSpacesStr) {
+        return number.length() % blockSize == 0 ? number
+                : (blockSizeSpacesStr + number).substring(number.length() % blockSize);
+    }
+
+    private int determineBlockSize(String multiplier, String multiplicand) {
+        return 7;
     }
 }
