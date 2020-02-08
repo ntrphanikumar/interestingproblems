@@ -13,7 +13,7 @@ public class BlockLevelMultiplicationTest {
 
     @Test
     public void testMultiplicationOfNumbersOfSizeHundredThousandEach() {
-        String first = NumberUtils.randomNumber(99999);
+        String first = NumberUtils.randomNumber(999999);
         String second = NumberUtils.randomNumber(99999);
         assertOperationResults(() -> new BigInteger(first).multiply(new BigInteger(second)).toString(),
                 () -> product.compute(first, second));
