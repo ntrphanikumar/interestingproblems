@@ -1,15 +1,13 @@
-package interesting.operations.largenumbers;
+package interesting.operations.multiply;
 
-import static interesting.operations.largenumbers.NumberUtils.randomNumber;
-import static interesting.operations.largenumbers.NumberUtils.sum;
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SingleDigitProduct implements Product {
+import interesting.operations.NumberUtils;
+
+public class SingleDigitMultiplication  {
 
     private static final char CHAR_ZERO = '0';
 
@@ -49,25 +47,6 @@ public class SingleDigitProduct implements Product {
             numbersToSum.add(result);
             maxLength = Math.max(maxLength, result.length());
         }
-        return sum(numbersToSum, maxLength);
-    }
-
-    public static void main(String[] args) {
-        String first = randomNumber(9999);
-        String second = randomNumber(9999);
-        System.out.println("SingleDigitProduct of");
-        System.out.println(first);
-        System.out.println("X");
-        System.out.println(second);
-        long start = System.nanoTime();
-        String compute = new SingleDigitProduct().compute(first, second);
-        long end = System.nanoTime();
-        System.out.println("=");
-        System.out.println(compute);
-        System.out.println("Took nanos my multiplication: " + (end - start));
-        start = System.nanoTime();
-        new BigInteger(first).multiply(new BigInteger(second)).toString();
-        end = System.nanoTime();
-        System.out.println("Took nanos bigint: " + (end - start));
+        return NumberUtils.sum(numbersToSum, maxLength);
     }
 }
