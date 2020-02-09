@@ -14,7 +14,7 @@ public class BlockLevelMultiplication {
     }
 
     private long[] powerMap(long[] multiplier, long[] multiplicand) {
-        long start = System.nanoTime();
+//        long start = System.nanoTime();
         int totalBlocksLength = multiplier.length + multiplicand.length;
         long[] values = new long[totalBlocksLength - 1];
         for (int i = 0; i < multiplier.length; i++) {
@@ -22,13 +22,13 @@ public class BlockLevelMultiplication {
                 values[totalBlocksLength - i - j - 2] += multiplicand[j] * multiplier[i];
             }
         }
-        long end = System.nanoTime();
-        System.out.println("Power list generation took: " + (end - start));
+//        long end = System.nanoTime();
+//        System.out.println("Power list generation took: " + (end - start));
         return values;
     }
 
     private String sum(long[] numbers, int blockSize) {
-        long start = System.nanoTime();
+//        long start = System.nanoTime();
         final long pow10BlockSize = (long) Math.pow(10d, (double) blockSize);
         final String blockSizeZerosStr = String.valueOf(pow10BlockSize).substring(1);
         String[] values = new String[numbers.length];
@@ -51,13 +51,13 @@ public class BlockLevelMultiplication {
         }
 
         String result = String.join("", values);
-        long end = System.nanoTime();
-        System.out.println("Sum took: " + (end - start));
+//        long end = System.nanoTime();
+//        System.out.println("Sum took: " + (end - start));
         return result;
     }
 
     private long[] splitToBlocks(String number, int blockSize) {
-        long start = System.nanoTime();
+//        long start = System.nanoTime();
         int idxAdj = number.length() % blockSize > 0 ? 0 : 1;
         long[] blocksArray = new long[1 - idxAdj + number.length() / blockSize];
         for (int idx = number.length(); idx > 0; idx -= blockSize) {
@@ -65,8 +65,8 @@ public class BlockLevelMultiplication {
             blocksArray[(idx / blockSize) - idxAdj] = Long
                     .parseLong(number.substring(beginIndex < 0 ? 0 : beginIndex, idx));
         }
-        long end = System.nanoTime();
-        System.out.println("Block generation took: " + (end - start));
+//        long end = System.nanoTime();
+//        System.out.println("Block generation took: " + (end - start));
         return blocksArray;
     }
 
@@ -77,6 +77,7 @@ public class BlockLevelMultiplication {
     public static void main(String[] args) {
         String first = NumberUtils.randomNumber(10);
         String second = NumberUtils.randomNumber(10);
+        System.out.println();
         new BlockLevelMultiplication().compute(first, second);
     }
 
