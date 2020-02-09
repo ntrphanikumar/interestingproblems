@@ -1,20 +1,35 @@
 package interesting.operations.multiply;
 
+import java.text.NumberFormat;
+
 import interesting.operations.NumberUtils;
 
 public class BlockLevelMultiplication {
 
-    public String compute(String multiplier, String multiplicand) {
+    private final boolean printLogs;
+
+    public BlockLevelMultiplication() {
+        this(false);
+    }
+
+    public BlockLevelMultiplication(boolean printLogs) {
+        this.printLogs = printLogs;
+    }
+
+    public String compute(String first, String second) {
+        long start = System.nanoTime();
         final int longRange = (Long.MAX_VALUE + "").length() - 1;
-        if (multiplier.length() + multiplicand.length() <= longRange) {
-            return String.valueOf(Long.parseLong(multiplier) * Long.parseLong(multiplicand));
+        if (first.length() + second.length() <= longRange) {
+            return String.valueOf(Long.parseLong(first) * Long.parseLong(second));
         }
-        int blockSize = determineBlockSize(multiplier, multiplicand);
-        return sum(powerMap(splitToBlocks(multiplier, blockSize), splitToBlocks(multiplicand, blockSize)), blockSize);
+        int blockSize = determineBlockSize(first, second);
+        String res = sum(powerMap(splitToBlocks(first, blockSize), splitToBlocks(second, blockSize)), blockSize);
+        logTime("Total multiplication", start, System.nanoTime());
+        return res;
     }
 
     private long[] powerMap(long[] multiplier, long[] multiplicand) {
-//        long start = System.nanoTime();
+        long start = System.nanoTime();
         int totalBlocksLength = multiplier.length + multiplicand.length;
         long[] values = new long[totalBlocksLength - 1];
         for (int i = 0; i < multiplier.length; i++) {
@@ -22,13 +37,12 @@ public class BlockLevelMultiplication {
                 values[totalBlocksLength - i - j - 2] += multiplicand[j] * multiplier[i];
             }
         }
-//        long end = System.nanoTime();
-//        System.out.println("Power list generation took: " + (end - start));
+        logTime("Power list generation", start, System.nanoTime());
         return values;
     }
 
     private String sum(long[] numbers, int blockSize) {
-//        long start = System.nanoTime();
+        long start = System.nanoTime();
         final long pow10BlockSize = (long) Math.pow(10d, (double) blockSize);
         final String blockSizeZerosStr = String.valueOf(pow10BlockSize).substring(1);
         String[] values = new String[numbers.length];
@@ -51,13 +65,12 @@ public class BlockLevelMultiplication {
         }
 
         String result = String.join("", values);
-//        long end = System.nanoTime();
-//        System.out.println("Sum took: " + (end - start));
+        logTime("Sum", start, System.nanoTime());
         return result;
     }
 
     private long[] splitToBlocks(String number, int blockSize) {
-//        long start = System.nanoTime();
+        long start = System.nanoTime();
         int idxAdj = number.length() % blockSize > 0 ? 0 : 1;
         long[] blocksArray = new long[1 - idxAdj + number.length() / blockSize];
         for (int idx = number.length(); idx > 0; idx -= blockSize) {
@@ -65,8 +78,7 @@ public class BlockLevelMultiplication {
             blocksArray[(idx / blockSize) - idxAdj] = Long
                     .parseLong(number.substring(beginIndex < 0 ? 0 : beginIndex, idx));
         }
-//        long end = System.nanoTime();
-//        System.out.println("Block generation took: " + (end - start));
+        logTime("Block generation", start, System.nanoTime());
         return blocksArray;
     }
 
@@ -74,11 +86,16 @@ public class BlockLevelMultiplication {
         return 7;
     }
 
+    private void logTime(String operation, long start, long end) {
+        if (printLogs) {
+            System.out.println(operation + " took: " + NumberFormat.getInstance().format(end - start) + " nanos");
+        }
+    }
+
     public static void main(String[] args) {
-        String first = NumberUtils.randomNumber(10);
-        String second = NumberUtils.randomNumber(10);
-        System.out.println();
-        new BlockLevelMultiplication().compute(first, second);
+        String first = NumberUtils.randomNumber(1000000);
+        String second = NumberUtils.randomNumber(1000000);
+        new BlockLevelMultiplication(true).compute(first, second);
     }
 
 }
