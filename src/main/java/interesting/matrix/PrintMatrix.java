@@ -1,10 +1,15 @@
-package interesting.printmatrix;
+package interesting.matrix;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PrintMatrix {
 
+    /**
+     * Prints matrix in clockwise direction
+     * 
+     * @param matrix
+     */
     public void printInClockWise(String[][] matrix) {
         if (matrix.length == 0 || matrix.length != matrix[0].length) {
             throw new IllegalArgumentException("Invalid matrix");

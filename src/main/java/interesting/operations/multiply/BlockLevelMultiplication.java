@@ -22,7 +22,7 @@ public class BlockLevelMultiplication {
         if (first.length() + second.length() <= longRange) {
             return String.valueOf(Long.parseLong(first) * Long.parseLong(second));
         }
-        int blockSize = determineBlockSize(first, second);
+        int blockSize = 7;
         String res = sum(powerMap(splitToBlocks(first, blockSize), splitToBlocks(second, blockSize)), blockSize);
         logTime("Total multiplication", start, System.nanoTime());
         return res;
@@ -80,10 +80,6 @@ public class BlockLevelMultiplication {
         }
         logTime("Block generation", start, System.nanoTime());
         return blocksArray;
-    }
-
-    private int determineBlockSize(String multiplier, String multiplicand) {
-        return 7;
     }
 
     private void logTime(String operation, long start, long end) {
