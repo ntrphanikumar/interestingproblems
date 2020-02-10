@@ -64,7 +64,7 @@ public class BlockLevelMultiplicationTest {
                 () -> product.compute(first, second), "Million length each");
     }
     
-//    @Test
+    @Test
     public void multiplication7OfNumbersOfSizeTenMillionAndAMillion() {
         String first = NumberUtils.randomNumber(10000000);
         String second = NumberUtils.randomNumber(1000000);
