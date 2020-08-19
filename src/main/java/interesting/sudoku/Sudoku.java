@@ -1,6 +1,6 @@
 package interesting.sudoku;
 
-import static interesting.sudoku.SudokuConstants.SUDOKU_3X3_DIFF;
+import static interesting.sudoku.SudokuConstants.*;
 import static java.util.Arrays.asList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
@@ -24,8 +24,8 @@ public class Sudoku {
     private static final BinaryOperator<Boolean> OR = (a, b) -> b || a;
     private static final BinaryOperator<Boolean> AND = (a, b) -> a && b;
 
-    private final Integer[][] matrix;
-    private final List<List<Set<Integer>>> pencilmarks;
+    private Integer[][] matrix;
+    private List<List<Set<Integer>>> pencilmarks;
     private final int length, blockSize;
 
     public Sudoku(Integer[][] sudoku) {
@@ -48,7 +48,12 @@ public class Sudoku {
         if (needsAdjustment) {
             solve();
         }
-        return isFilled() ? this : tryWithRandomPickedValueForACell();
+        if (!isFilled()) {
+            Sudoku solved = tryWithRandomPickedValueForACell();
+            matrix = solved.matrix;
+            pencilmarks = solved.pencilmarks;
+        }
+        return this;
     }
 
     public boolean isValid() {
@@ -198,14 +203,13 @@ public class Sudoku {
     }
 
     public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku(SUDOKU_3X3_DIFF);
+        Sudoku sudoku = new Sudoku(SUDOKU_3X3_NIGHTMARE);
         System.out.println(sudoku);
-        sudoku = sudoku.solve();
-        System.out.println(sudoku);
-        if (!sudoku.isValid()) {
-            System.out.println("Unsolved");
-        } else {
+        if (sudoku.solve().isValid()) {
             System.out.println("Solved");
+        } else {
+            System.out.println("Unsolved");
         }
+        System.out.println(sudoku);
     }
 }

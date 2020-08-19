@@ -45,4 +45,16 @@ interface SudokuConstants {
         new Integer[] {X, X, 1, X, 8, 6, X, X, 3},
         new Integer[] {4, X, X, X, 5, X, 1, 8, X}
     };
+    
+    Integer[][] SUDOKU_3X3_NIGHTMARE = new Integer[][] {
+        new Integer[] {3, 4, 9, X, 1, X, X, X, X},
+        new Integer[] {X, X, X, X, 3, X, X, X, 8},
+        new Integer[] {X, 7, X, 5, X, X, X, X, X},
+        new Integer[] {X, X, 3, 2, 5, X, X, 7, X},
+        new Integer[] {2, 5, X, 9, X, X, X ,X, X},
+        new Integer[] {1, X, X, X, X, X, X, X, X},
+        new Integer[] {4, 8, X, X, X, 7, X, 3, X},
+        new Integer[] {X, X, X, 3, X, 5, 8, 4, X},
+        new Integer[] {X, 3, 5, X, X, X, X, 6, X}
+    };
 }
