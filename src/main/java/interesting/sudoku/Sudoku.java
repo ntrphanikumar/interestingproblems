@@ -57,23 +57,14 @@ public class Sudoku {
     }
 
     public boolean isValid() {
-        Set<Integer> values = allowedValues();
+        final Set<Integer> values = allowedValues();
         return range(0, length).boxed().map(i -> {
-            if (!values.equals(new HashSet<>(asList(matrix[i])))) {
-                return false;
-            }
-            if (!values.equals(range(0, length).boxed().map(row -> matrix[row][i]).collect(toSet()))) {
-                return false;
-            }
-
             int startRow = (i / blockSize) * blockSize, startCol = (i % blockSize) * blockSize;
-            Set<Integer> innerSquareNumbers = range(0, blockSize).boxed().map(row -> range(0, blockSize).boxed()
-                    .map(col -> matrix[row + startRow][col + startCol]).collect(toSet())).flatMap(Set::stream)
-                    .collect(toSet());
-            if (!values.equals(innerSquareNumbers)) {
-                return false;
-            }
-            return true;
+            return asList(matrix[i]).containsAll(values)
+                    && range(0, length).boxed().map(row -> matrix[row][i]).allMatch(values::contains)
+                    && range(0, blockSize).boxed()
+                            .map(row -> range(0, blockSize).boxed().map(col -> matrix[row + startRow][col + startCol]))
+                            .flatMap(identity()).allMatch(values::contains);
         }).reduce(true, AND);
     }
 
