@@ -72,16 +72,6 @@ public class Sudoku {
         }).reduce(true, AND);
     }
 
-    public void print() {
-        range(0, length).boxed().forEach(row -> {
-            range(0, length).boxed().forEach(col -> {
-                System.out.print((matrix[row][col] == null ? "X" : String.valueOf(matrix[row][col])) + " ");
-            });
-            System.out.println();
-        });
-        System.out.println();
-    }
-
     private Sudoku tryWithRandomPickedValueForACell() {
         for (int row = 0; row < length; row++) {
             for (int col = 0; col < length; col++) {
@@ -195,11 +185,23 @@ public class Sudoku {
         return rangeClosed(1, length).boxed().collect(toSet());
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        range(0, length).boxed().forEach(row -> {
+            range(0, length).boxed().forEach(col -> {
+                builder.append((matrix[row][col] == null ? "X" : String.valueOf(matrix[row][col]))).append(" ");
+            });
+            builder.append("\n");
+        });
+        return builder.toString();
+    }
+
     public static void main(String[] args) {
         Sudoku sudoku = new Sudoku(SUDOKU_3X3_DIFF);
-        sudoku.print();
+        System.out.println(sudoku);
         sudoku = sudoku.solve();
-        sudoku.print();
+        System.out.println(sudoku);
         if (!sudoku.isValid()) {
             System.out.println("Unsolved");
         } else {
