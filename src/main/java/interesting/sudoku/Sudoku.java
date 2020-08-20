@@ -43,9 +43,7 @@ public class Sudoku {
     }
 
     public Sudoku solve() {
-        boolean needsAdjustment = fillCellsWithSinglePossibility();
-        needsAdjustment = fillSingleValueOnlyPossibleCells() || needsAdjustment;
-        if (needsAdjustment) {
+        if (concat(fillCellsWithSinglePossibility(), fillSingleValueOnlyPossibleCells()).reduce(FALSE, OR)) {
             solve();
         }
         if (!isFilled()) {
@@ -94,7 +92,7 @@ public class Sudoku {
                 .filter(TRUE::equals).count() == 0;
     }
 
-    private boolean fillSingleValueOnlyPossibleCells() {
+    private Stream<Boolean> fillSingleValueOnlyPossibleCells() {
         return range(0, length)
                 .mapToObj(idx -> concat(concat(
                         subtract(allowedValues(), asList(matrix[idx])).map(value -> fillInRow(idx, value)),
@@ -105,7 +103,7 @@ public class Sudoku {
                                         .mapToObj(row -> range(0, blockSize)
                                                 .mapToObj(col -> matrix[blockRow(idx, row)][blockCol(idx, col)]))
                                         .flatMap(identity()).collect(toSet())).map(value -> fillInBlock(idx, value))))
-                .flatMap(l -> l).reduce(FALSE, OR);
+                .flatMap(identity());
     }
 
     private int blockRow(int block, int row) {
@@ -128,7 +126,7 @@ public class Sudoku {
     private boolean fillInBlock(int block, Integer value) {
         return fillInCell(range(0, blockSize).mapToObj(row -> range(0, blockSize)
                 .filter(col -> pencilmarks.get(blockRow(block, row)).get(blockCol(block, col)).contains(value))
-                .mapToObj(col -> new Cell(row, col))).flatMap(l -> l).collect(toList()), value);
+                .mapToObj(col -> new Cell(row, col))).flatMap(identity()).collect(toList()), value);
     }
 
     private boolean fillInCol(int col, Integer value) {
@@ -149,14 +147,12 @@ public class Sudoku {
         return from.stream().filter(val -> !sub.contains(val));
     }
 
-    private boolean fillCellsWithSinglePossibility() {
-        return range(0, length).mapToObj(row -> range(0, length).mapToObj(col -> {
-            if (matrix[row][col] == null && pencilmarks.get(row).get(col).size() == 1) {
-                setValueAtPosition(row, col, pencilmarks.get(row).get(col).iterator().next());
-                return true;
-            }
-            return false;
-        }).reduce(FALSE, OR)).reduce(FALSE, OR);
+    private Stream<Boolean> fillCellsWithSinglePossibility() {
+        return range(0, length)
+                .mapToObj(row -> range(0, length)
+                        .filter(col -> matrix[row][col] == null && pencilmarks.get(row).get(col).size() == 1)
+                        .mapToObj(col -> setValueAtPosition(row, col, pencilmarks.get(row).get(col).iterator().next())))
+                .flatMap(identity());
     }
 
     private boolean setValueAtPosition(int row, int col, Integer value) {
