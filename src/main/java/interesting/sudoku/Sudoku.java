@@ -27,18 +27,18 @@ public class Sudoku {
     private static final Predicate<Sudoku> NOT_NULL = v -> v != null;
 
     private Integer[][] matrix;
-    private List<List<Set<Integer>>> pencilmarks;
-    private final int length, blockSize;
+    private List<List<Set<Integer>>> possibles;
+    private final int length, bSize;
 
     public Sudoku(Integer[][] sudoku) {
         this.matrix = sudoku;
         this.length = sudoku.length;
-        this.blockSize = (int) Math.sqrt((double) length);
-        this.pencilmarks = range(0, sudoku.length)
+        this.bSize = (int) Math.sqrt((double) length);
+        this.possibles = range(0, sudoku.length)
                 .mapToObj(i -> range(0, sudoku.length).mapToObj(j -> allowedValues()).collect(toList()))
                 .collect(toList());
         range(0, sudoku.length).forEach(row -> range(0, sudoku.length)
-                .filter(col -> sudoku[row][col] != null && !pencilmarks.get(row).get(col).isEmpty())
+                .filter(col -> sudoku[row][col] != null && !possibles.get(row).get(col).isEmpty())
                 .forEach(col -> setValueAtPosition(row, col, sudoku[row][col])));
     }
 
@@ -49,18 +49,15 @@ public class Sudoku {
         if (!isFilled()) {
             Sudoku solved = tryWithRandomPickedValueForACell();
             matrix = solved.matrix;
-            pencilmarks = solved.pencilmarks;
+            possibles = solved.possibles;
         }
         return this;
     }
 
     public boolean isValid() {
-        return range(0, length)
-                .mapToObj(i -> asList(matrix[i]).containsAll(allowedValues())
-                        && range(0, length).mapToObj(row -> matrix[row][i]).allMatch(allowedValues()::contains)
-                        && range(0, blockSize).mapToObj(
-                                row -> range(0, blockSize).mapToObj(col -> matrix[blockRow(i, row)][blockCol(i, col)]))
-                                .flatMap(identity()).allMatch(allowedValues()::contains))
+        return range(0, length).mapToObj(idx -> asList(matrix[idx]).containsAll(allowedValues())
+                && range(0, length).mapToObj(row -> matrix[row][idx]).collect(toSet()).containsAll(allowedValues())
+                && cells(idx).map(c -> matrix[c.row][c.col]).collect(toSet()).containsAll(allowedValues()))
                 .reduce(TRUE, AND);
     }
 
@@ -72,10 +69,10 @@ public class Sudoku {
     }
 
     private Sudoku tryAPencilValue(Integer row, Integer col) {
-        if (pencilmarks.get(row).get(col).isEmpty()) {
+        if (possibles.get(row).get(col).isEmpty()) {
             return this;
         }
-        return pencilmarks.get(row).get(col).stream().map(value -> tryValue(row, col, value)).filter(NOT_NULL).findAny()
+        return possibles.get(row).get(col).stream().map(value -> tryValue(row, col, value)).filter(NOT_NULL).findAny()
                 .orElse(null);
     }
 
@@ -94,24 +91,28 @@ public class Sudoku {
 
     private Stream<Boolean> fillSingleValueOnlyPossibleCells() {
         return range(0, length)
-                .mapToObj(idx -> concat(concat(
-                        subtract(allowedValues(), asList(matrix[idx])).map(value -> fillInRow(idx, value)),
-                        subtract(allowedValues(), range(0, length).mapToObj(row -> matrix[row][idx]).collect(toSet()))
-                                .map(value -> fillInCol(idx, value))),
-                        subtract(allowedValues(),
-                                range(0, blockSize)
-                                        .mapToObj(row -> range(0, blockSize)
-                                                .mapToObj(col -> matrix[blockRow(idx, row)][blockCol(idx, col)]))
-                                        .flatMap(identity()).collect(toSet())).map(value -> fillInBlock(idx, value))))
+                .mapToObj(idx -> concat(
+                        concat(subtract(allowedValues(), asList(matrix[idx])).map(value -> fillInRow(idx, value)),
+                                subtract(allowedValues(),
+                                        range(0, length).mapToObj(row -> matrix[row][idx]).collect(toSet()))
+                                                .map(value -> fillInCol(idx, value))),
+                        subtract(allowedValues(), cells(idx).map(c -> matrix[c.row][c.col]).collect(toSet()))
+                                .map(value -> fillInBlock(idx, value))))
                 .flatMap(identity());
     }
 
-    private int blockRow(int block, int row) {
-        return ((block / blockSize) * blockSize) + row;
+    private Stream<Cell> cells(int block) {
+        return range(0, bSize)
+                .mapToObj(row -> range(0, bSize).mapToObj(col -> new Cell(row(block, row), col(block, col))))
+                .flatMap(identity());
     }
 
-    private int blockCol(int block, int col) {
-        return ((block % blockSize) * blockSize) + col;
+    private int row(int block, int row) {
+        return ((block / bSize) * bSize) + row;
+    }
+
+    private int col(int block, int col) {
+        return ((block % bSize) * bSize) + col;
     }
 
     static class Cell {
@@ -124,18 +125,18 @@ public class Sudoku {
     }
 
     private boolean fillInBlock(int block, Integer value) {
-        return fillInCell(range(0, blockSize).mapToObj(row -> range(0, blockSize)
-                .filter(col -> pencilmarks.get(blockRow(block, row)).get(blockCol(block, col)).contains(value))
+        return fillInCell(range(0, bSize).mapToObj(row -> range(0, bSize)
+                .filter(col -> possibles.get(row(block, row)).get(col(block, col)).contains(value))
                 .mapToObj(col -> new Cell(row, col))).flatMap(identity()).collect(toList()), value);
     }
 
     private boolean fillInCol(int col, Integer value) {
-        return fillInCell(range(0, length).filter(row -> pencilmarks.get(row).get(col).contains(value))
+        return fillInCell(range(0, length).filter(row -> possibles.get(row).get(col).contains(value))
                 .mapToObj(row -> new Cell(row, col)).collect(toList()), value);
     }
 
     private boolean fillInRow(int row, Integer value) {
-        return fillInCell(range(0, length).filter(col -> pencilmarks.get(row).get(col).contains(value))
+        return fillInCell(range(0, length).filter(col -> possibles.get(row).get(col).contains(value))
                 .mapToObj(col -> new Cell(row, col)).collect(toList()), value);
     }
 
@@ -150,21 +151,19 @@ public class Sudoku {
     private Stream<Boolean> fillCellsWithSinglePossibility() {
         return range(0, length)
                 .mapToObj(row -> range(0, length)
-                        .filter(col -> matrix[row][col] == null && pencilmarks.get(row).get(col).size() == 1)
-                        .mapToObj(col -> setValueAtPosition(row, col, pencilmarks.get(row).get(col).iterator().next())))
+                        .filter(col -> matrix[row][col] == null && possibles.get(row).get(col).size() == 1)
+                        .mapToObj(col -> setValueAtPosition(row, col, possibles.get(row).get(col).iterator().next())))
                 .flatMap(identity());
     }
 
     private boolean setValueAtPosition(int row, int col, Integer value) {
         matrix[row][col] = value;
-        pencilmarks.get(row).get(col).clear();
+        possibles.get(row).get(col).clear();
         range(0, length).forEach(idx -> {
-            pencilmarks.get(row).get(idx).remove(value);
-            pencilmarks.get(idx).get(col).remove(value);
+            possibles.get(row).get(idx).remove(value);
+            possibles.get(idx).get(col).remove(value);
         });
-        int startRow = (row / blockSize) * blockSize, startCol = (col / blockSize) * blockSize;
-        range(0, blockSize).forEach(
-                r -> range(0, blockSize).forEach(c -> pencilmarks.get(r + startRow).get(c + startCol).remove(value)));
+        cells(((row / bSize) * bSize) + (col / bSize)).forEach(c -> possibles.get(c.row).get(c.col).remove(value));
         return true;
     }
 
