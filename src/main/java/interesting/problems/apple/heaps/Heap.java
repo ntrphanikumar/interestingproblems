@@ -1,13 +1,16 @@
 package interesting.problems.apple.heaps;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
-public class MaxHeap {
+public class Heap {
     private final Integer[] heap;
     private int size;
+    private final Comparator<Integer> comparator;
 
-    MaxHeap(int capacity) {
+    private Heap(int capacity, Comparator<Integer> comparator) {
         heap = new Integer[capacity];
+        this.comparator = comparator;
     }
 
     public void add(int number) {
@@ -49,15 +52,15 @@ public class MaxHeap {
 
     private void heapify(int idx) {
         int parentIdx = parent(idx), leftChildIdx = leftChild(idx), rightChildIdx = rightChild(idx);
-        if (idx > 0 && heap[parentIdx] < heap[idx]) {
+        if (idx > 0 && comparator.compare(heap[parentIdx], heap[idx]) > 0) {
             swap(idx, parentIdx);
             heapify(parentIdx);
         }
-        if (size > leftChildIdx && heap[leftChildIdx] > heap[idx]) {
+        if (size > leftChildIdx && comparator.compare(heap[leftChildIdx], heap[idx]) < 0) {
             swap(idx, leftChildIdx);
             heapify(leftChildIdx);
         }
-        if (size > rightChildIdx && heap[rightChildIdx] > heap[idx]) {
+        if (size > rightChildIdx && comparator.compare(heap[rightChildIdx], heap[idx]) < 0) {
             swap(idx, rightChildIdx);
             heapify(rightChildIdx);
         }
@@ -79,19 +82,27 @@ public class MaxHeap {
         System.out.println(Arrays.asList(heap));
     }
 
+    public static final Heap minHeap(int capacity) {
+        return new Heap(capacity, (a, b) -> a - b);
+    }
+
+    public static final Heap maxHeap(int capacity) {
+        return new Heap(capacity, (a, b) -> b - a);
+    }
+
     public static void main(String[] args) {
-        MaxHeap maxHeap = new MaxHeap(10);
+        Heap minHeap = Heap.minHeap(10);
         for (int i = 10; i > 0; i--) {
-            maxHeap.add(i);
-            maxHeap.print();
+            minHeap.add(i);
+            minHeap.print();
         }
 
         for (int i = 0; i < 5; i++) {
-            System.out.println(maxHeap.poll());
-            maxHeap.print();
+            System.out.println(minHeap.poll());
+            minHeap.print();
         }
 
-        maxHeap.add(5);
-        maxHeap.print();
+        minHeap.add(5);
+        minHeap.print();
     }
 }

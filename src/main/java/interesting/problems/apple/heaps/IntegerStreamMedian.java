@@ -1,8 +1,8 @@
 package interesting.problems.apple.heaps;
 
 public class IntegerStreamMedian {
-    private MaxHeap maxHeap = new MaxHeap(10);
-    private MinHeap minHeap = new MinHeap(10);
+    private Heap maxHeap = Heap.maxHeap(10);
+    private Heap minHeap = Heap.minHeap(10);
 
     public int addNumberAndGetMedian(int num) {
         if (minHeap.isEmpty() || minHeap.peek() < num) {
