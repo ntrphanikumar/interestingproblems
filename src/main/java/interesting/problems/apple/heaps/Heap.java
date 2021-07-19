@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class Heap {
-    private final Integer[] heap;
+    private Integer[] heap;
     private int size;
     private final Comparator<Integer> comparator;
 
@@ -15,7 +15,9 @@ public class Heap {
 
     public void add(int number) {
         if (size == heap.length) {
-            throw new IndexOutOfBoundsException("Heap is full");
+            Integer[] newHeap = new Integer[2 * size];
+            System.arraycopy(heap, 0, newHeap, 0, size);
+            heap = newHeap;
         }
         heap[size++] = number;
         heapify(size - 1);
@@ -51,7 +53,7 @@ public class Heap {
     }
 
     private void heapify(int idx) {
-        int parentIdx = parent(idx), leftChildIdx = leftChild(idx), rightChildIdx = rightChild(idx);
+        int parentIdx = (idx - 1) / 2, leftChildIdx = 2 * idx + 1, rightChildIdx = leftChildIdx + 1;
         if (idx > 0 && comparator.compare(heap[parentIdx], heap[idx]) > 0) {
             swap(idx, parentIdx);
             heapify(parentIdx);
@@ -66,33 +68,21 @@ public class Heap {
         }
     }
 
-    private int leftChild(int idx) {
-        return 2 * idx + 1;
-    }
-
-    private int rightChild(int idx) {
-        return 2 * idx + 2;
-    }
-
-    private int parent(int idx) {
-        return (idx - 1) / 2;
-    }
-
     public void print() {
-        System.out.println(Arrays.asList(heap));
+        System.out.println(Arrays.asList(heap).subList(0, size));
     }
 
-    public static final Heap minHeap(int capacity) {
-        return new Heap(capacity, (a, b) -> a - b);
+    public static Heap minHeap(int capacity) {
+        return new Heap(capacity, Comparator.comparingInt(a -> a));
     }
 
-    public static final Heap maxHeap(int capacity) {
-        return new Heap(capacity, (a, b) -> b - a);
+    public static Heap maxHeap(int capacity) {
+        return new Heap(capacity, Comparator.comparingInt(a -> -a));
     }
 
     public static void main(String[] args) {
         Heap minHeap = Heap.minHeap(10);
-        for (int i = 10; i > 0; i--) {
+        for (int i = 20; i > 0; i--) {
             minHeap.add(i);
             minHeap.print();
         }
