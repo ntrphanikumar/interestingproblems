@@ -20,6 +20,10 @@ public class Base36NumSum {
         }
     }
 
+    public static void main(String[] args) {
+        System.out.println(new Base36NumSum().sum("abcd", "pqr"));
+    }
+
     public String sum(String num1, String num2) {
         int minLength = Math.min(num1.length(), num2.length());
         String result = "";
@@ -48,9 +52,5 @@ public class Base36NumSum {
             }
         }
         return carry > 0 ? decimalToBase36.get(carry) + result : result;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Base36NumSum().sum("abcd", "pqr"));
     }
 }

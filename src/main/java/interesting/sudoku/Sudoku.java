@@ -1,17 +1,5 @@
 package interesting.sudoku;
 
-import static interesting.sudoku.SudokuConstants.SUDOKU_3X3_NIGHTMARE;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static java.util.Arrays.asList;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static java.util.stream.IntStream.range;
-import static java.util.stream.IntStream.rangeClosed;
-import static java.util.stream.Stream.concat;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -20,26 +8,46 @@ import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static interesting.sudoku.SudokuConstants.SUDOKU_3X3_NIGHTMARE;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.util.Arrays.asList;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
+import static java.util.stream.Stream.concat;
+
 public class Sudoku {
 
     private static final BinaryOperator<Boolean> OR = (a, b) -> b || a;
     private static final BinaryOperator<Boolean> AND = (a, b) -> a && b;
     private static final Predicate<Sudoku> NOT_NULL = v -> v != null;
-
+    private final int length, bSize;
     private Integer[][] matrix;
     private List<List<Set<Integer>>> possibles;
-    private final int length, bSize;
 
     public Sudoku(Integer[][] sudoku) {
         this.matrix = sudoku;
         this.length = sudoku.length;
-        this.bSize = (int) Math.sqrt((double) length);
+        this.bSize = (int) Math.sqrt(length);
         this.possibles = range(0, sudoku.length)
                 .mapToObj(i -> range(0, sudoku.length).mapToObj(j -> allowedValues()).collect(toList()))
                 .collect(toList());
         range(0, sudoku.length).forEach(row -> range(0, sudoku.length)
                 .filter(col -> sudoku[row][col] != null && !possibles.get(row).get(col).isEmpty())
                 .forEach(col -> setValueAtPosition(row, col, sudoku[row][col])));
+    }
+
+    public static void main(String[] args) {
+        Sudoku sudoku = new Sudoku(SUDOKU_3X3_NIGHTMARE);
+        System.out.println(sudoku);
+        if (sudoku.solve().isValid()) {
+            System.out.println("Solved");
+        } else {
+            System.out.println("Unsolved");
+        }
+        System.out.println(sudoku);
     }
 
     public Sudoku solve() {
@@ -95,7 +103,7 @@ public class Sudoku {
                         concat(subtract(allowedValues(), asList(matrix[idx])).map(value -> fillInRow(idx, value)),
                                 subtract(allowedValues(),
                                         range(0, length).mapToObj(row -> matrix[row][idx]).collect(toSet()))
-                                                .map(value -> fillInCol(idx, value))),
+                                        .map(value -> fillInCol(idx, value))),
                         subtract(allowedValues(), cells(idx).map(c -> matrix[c.row][c.col]).collect(toSet()))
                                 .map(value -> fillInBlock(idx, value))))
                 .flatMap(identity());
@@ -115,15 +123,6 @@ public class Sudoku {
         return ((block % bSize) * bSize) + col;
     }
 
-    static class Cell {
-        private final int row, col;
-
-        Cell(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-    }
-
     private boolean fillInBlock(int block, Integer value) {
         return fillInCell(range(0, bSize).mapToObj(row -> range(0, bSize)
                 .filter(col -> possibles.get(row(block, row)).get(col(block, col)).contains(value))
@@ -141,7 +140,7 @@ public class Sudoku {
     }
 
     private boolean fillInCell(List<Cell> cells, Integer value) {
-        return cells.size() == 1 ? setValueAtPosition(cells.get(0).row, cells.get(0).col, value) : false;
+        return cells.size() == 1 && setValueAtPosition(cells.get(0).row, cells.get(0).col, value);
     }
 
     private <T> Stream<T> subtract(Set<T> from, Collection<T> sub) {
@@ -178,14 +177,12 @@ public class Sudoku {
                 .collect(joining(" "))).collect(joining("\n"));
     }
 
-    public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku(SUDOKU_3X3_NIGHTMARE);
-        System.out.println(sudoku);
-        if (sudoku.solve().isValid()) {
-            System.out.println("Solved");
-        } else {
-            System.out.println("Unsolved");
+    static class Cell {
+        private final int row, col;
+
+        Cell(int row, int col) {
+            this.row = row;
+            this.col = col;
         }
-        System.out.println(sudoku);
     }
 }

@@ -1,19 +1,15 @@
 package interesting.operations.multiply;
 
+import interesting.operations.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import interesting.operations.NumberUtils;
-
-public class SingleDigitMultiplication  {
+public class SingleDigitMultiplication {
 
     private static final char CHAR_ZERO = '0';
-
-    public String compute(String first, String second) {
-        return first.length() > second.length() ? computeProduct(first, second) : computeProduct(second, first);
-    }
 
     private static String computeProduct(String multiplicand, String multiplier) {
         int multiplicandLength = multiplicand.length();
@@ -48,5 +44,9 @@ public class SingleDigitMultiplication  {
             maxLength = Math.max(maxLength, result.length());
         }
         return NumberUtils.sum(numbersToSum, maxLength);
+    }
+
+    public String compute(String first, String second) {
+        return first.length() > second.length() ? computeProduct(first, second) : computeProduct(second, first);
     }
 }

@@ -1,6 +1,5 @@
-package interesting.problems.apple.dp;
+package interesting.problems.dp;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class LargestSumSubArray {
@@ -16,7 +15,7 @@ public class LargestSumSubArray {
                 maxSumsForPos[i] = numbers[i] + maxSumsForPos[i - 1];
             }
             maxSum = Math.max(maxSum, maxSumsForPos[i]);
-            System.out.println(Arrays.<Integer>asList(maxSumsForPos));
+            System.out.println(Arrays.asList(maxSumsForPos));
         }
         return maxSum;
     }

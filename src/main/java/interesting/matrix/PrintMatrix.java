@@ -5,9 +5,23 @@ import java.util.List;
 
 public class PrintMatrix {
 
+    public static void main(String[] args) {
+        new PrintMatrix().printInClockWise(randomMatrix(3));
+    }
+
+    private static String[][] randomMatrix(int len) {
+        String[][] matrix = new String[len][len];
+        for (int row = 0; row < len; row++) {
+            for (int col = 0; col < len; col++) {
+                matrix[row][col] = (char) ((int) 'a' + col) + "";
+            }
+        }
+        return matrix;
+    }
+
     /**
      * Prints matrix in clockwise direction
-     * 
+     *
      * @param matrix
      */
     public void printInClockWise(String[][] matrix) {
@@ -41,19 +55,5 @@ public class PrintMatrix {
             boundary.add(matrix[size - level - 1][level]);
         }
         return boundary;
-    }
-
-    public static void main(String[] args) {
-        new PrintMatrix().printInClockWise(randomMatrix(3));
-    }
-
-    private static String[][] randomMatrix(int len) {
-        String[][] matrix = new String[len][len];
-        for (int row = 0; row < len; row++) {
-            for (int col = 0; col < len; col++) {
-                matrix[row][col] = (char) ((int) 'a' + col) + "";
-            }
-        }
-        return matrix;
     }
 }

@@ -9,7 +9,7 @@ public class MatrixCartesianProduct {
 
     /**
      * Computes Cartesian product of matrices
-     * 
+     *
      * @param sets
      * @return
      */

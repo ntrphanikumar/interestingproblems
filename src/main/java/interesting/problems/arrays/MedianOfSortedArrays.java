@@ -1,8 +1,12 @@
-package interesting.problems.apple.arrays;
+package interesting.problems.arrays;
 
 import java.util.Arrays;
 
 public class MedianOfSortedArrays {
+    public static void main(String[] args) {
+        new MedianOfSortedArrays().findMedianSortedArrays(new int[]{1, 3}, new int[]{2});
+    }
+
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int[] merged = merge(nums1, nums2);
         System.out.println(Arrays.asList(merged));
@@ -29,9 +33,5 @@ public class MedianOfSortedArrays {
             System.arraycopy(nums2, idx2, merged, idx1 + idx2, nums2.length - idx2);
         }
         return merged;
-    }
-
-    public static void main(String[] args) {
-        new MedianOfSortedArrays().findMedianSortedArrays(new int[]{1, 3}, new int[]{2});
     }
 }

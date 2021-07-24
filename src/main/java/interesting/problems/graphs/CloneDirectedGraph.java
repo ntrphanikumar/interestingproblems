@@ -1,4 +1,4 @@
-package interesting.problems.apple.graphs;
+package interesting.problems.graphs;
 
 import java.util.*;
 

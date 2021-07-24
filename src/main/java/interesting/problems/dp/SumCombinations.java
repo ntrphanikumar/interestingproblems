@@ -1,4 +1,4 @@
-package interesting.problems.apple.dp;
+package interesting.problems.dp;
 
 import java.util.*;
 

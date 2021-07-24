@@ -1,4 +1,4 @@
-package interesting.problems.apple.arrays;
+package interesting.problems.arrays;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MergeOverlappingIntervals {
+    public static void main(String[] args) {
+        int[][] intervals = {{1, 5}, {3, 7}, {4, 6}, {6, 8}, {10, 12}, {12, 15}, {16, 18}};
+        System.out.println(intervals);
+        System.out.println(new MergeOverlappingIntervals().merge(intervals));
+    }
+
     public int[][] merge(int[][] intervals) {
         if (intervals == null || intervals.length == 0) {
             return intervals;
@@ -36,11 +42,5 @@ public class MergeOverlappingIntervals {
             merged[i][1] = mergedIntervals.get(i)[1];
         }
         return merged;
-    }
-
-    public static void main(String[] args) {
-        int[][] intervals = {{1, 5}, {3, 7}, {4, 6}, {6, 8}, {10, 12}, {12, 15}, {16, 18}};
-        System.out.println(intervals);
-        System.out.println(new MergeOverlappingIntervals().merge(intervals));
     }
 }

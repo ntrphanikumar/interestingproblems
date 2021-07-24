@@ -7,6 +7,11 @@ import java.util.List;
 
 public class LinkedListSum {
 
+    public static void main(String[] args) {
+        System.out.println(new LinkedListSum().sum(new LinkedList<>(Arrays.asList(1, 2, 3)),
+                new LinkedList<>(Arrays.asList(9, 4, 5))));
+    }
+
     public List<Integer> sum(LinkedList<Integer> number1, LinkedList<Integer> number2) {
         int maxLength = Integer.max(number1.size(), number2.size()) + 1;
         int num1Length = number1.size(), num2Length = number2.size();
@@ -28,10 +33,5 @@ public class LinkedListSum {
             sum.set(pos - 1, valAtIdx / 10);
         }
         return sum;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new LinkedListSum().sum(new LinkedList<>(Arrays.asList(1, 2, 3)),
-                new LinkedList<>(Arrays.asList(9, 4, 5))));
     }
 }

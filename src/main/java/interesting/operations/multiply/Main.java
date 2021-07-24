@@ -1,18 +1,41 @@
 package interesting.operations.multiply;
 
+import interesting.operations.NumberUtils;
+
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import interesting.operations.NumberUtils;
-
 public class Main {
+    /*
+     * handle carry and remove the starting zeros of the number as those are not
+     * required
+     */
+    static Function<Integer[], String> productFunction = result -> {
+        StringBuilder product = new StringBuilder();
+        for (int i = 0; i < result.length; i++) {
+            int modulus = result[i] % 10;
+            int carry = result[i] / 10;
+            if (i + 1 < result.length) {
+                result[i + 1] = result[i + 1] + carry;
+            }
+            product.insert(0, modulus);
+        }
+        // used regex to remove leading zeros before returning the actual product
+        return product.toString().replaceFirst("^0+(?!$)", "");
+    };
+    // lamda expression to return the reverse of a string
+    static Function<String, String> reverseFunction = number -> new StringBuilder(number).reverse().toString();
+    // lamda expression to compute length of given string
+    static Function<String, Integer> lengthFunction = number -> number.length();
+    static Predicate<String> isPositivePredicate = number -> number.contains("-");
+
     public static void main(String[] args) {
-//      System.out.print("Enter first number:");  
+//      System.out.print("Enter first number:");
 //      String s1= new Scanner(System.in).nextLine();
-//      System.out.print("Enter second number: ");  
+//      System.out.print("Enter second number: ");
 //      String s2= new Scanner(System.in).nextLine();
-//        
+//
 //      System.out.println("Product of two numbers is:"+multiplyTwoNumbers(s1,s2));
 
         String first = NumberUtils.randomNumber(100000);
@@ -52,31 +75,5 @@ public class Main {
             }
         }
     }
-
-    /*
-     * handle carry and remove the starting zeros of the number as those are not
-     * required
-     */
-    static Function<Integer[], String> productFunction = result -> {
-        StringBuilder product = new StringBuilder();
-        for (int i = 0; i < result.length; i++) {
-            int modulus = result[i] % 10;
-            int carry = result[i] / 10;
-            if (i + 1 < result.length) {
-                result[i + 1] = result[i + 1] + carry;
-            }
-            product.insert(0, modulus);
-        }
-        // used regex to remove leading zeros before returning the actual product
-        return product.toString().replaceFirst("^0+(?!$)", "");
-    };
-
-    // lamda expression to return the reverse of a string
-    static Function<String, String> reverseFunction = number -> new StringBuilder(number).reverse().toString();
-
-    // lamda expression to compute length of given string
-    static Function<String, Integer> lengthFunction = number -> number.length();
-
-    static Predicate<String> isPositivePredicate = number -> number.contains("-");
 
 }

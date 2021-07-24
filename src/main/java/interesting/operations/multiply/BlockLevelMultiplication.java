@@ -1,8 +1,8 @@
 package interesting.operations.multiply;
 
-import java.text.NumberFormat;
-
 import interesting.operations.NumberUtils;
+
+import java.text.NumberFormat;
 
 public class BlockLevelMultiplication {
 
@@ -14,6 +14,12 @@ public class BlockLevelMultiplication {
 
     public BlockLevelMultiplication(boolean printLogs) {
         this.printLogs = printLogs;
+    }
+
+    public static void main(String[] args) {
+        String first = NumberUtils.randomNumber(1000000);
+        String second = NumberUtils.randomNumber(1000000);
+        new BlockLevelMultiplication(true).compute(first, second);
     }
 
     public String compute(String first, String second) {
@@ -43,7 +49,7 @@ public class BlockLevelMultiplication {
 
     private String sum(long[] numbers, int blockSize) {
         long start = System.nanoTime();
-        final long pow10BlockSize = (long) Math.pow(10d, (double) blockSize);
+        final long pow10BlockSize = (long) Math.pow(10d, blockSize);
         final String blockSizeZerosStr = String.valueOf(pow10BlockSize).substring(1);
         String[] values = new String[numbers.length];
         long carry = 0;
@@ -86,12 +92,6 @@ public class BlockLevelMultiplication {
         if (printLogs) {
             System.out.println(operation + " took: " + NumberFormat.getInstance().format(end - start) + " nanos");
         }
-    }
-
-    public static void main(String[] args) {
-        String first = NumberUtils.randomNumber(1000000);
-        String second = NumberUtils.randomNumber(1000000);
-        new BlockLevelMultiplication(true).compute(first, second);
     }
 
 }

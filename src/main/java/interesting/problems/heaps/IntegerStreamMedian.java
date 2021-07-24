@@ -1,8 +1,17 @@
-package interesting.problems.apple.heaps;
+package interesting.problems.heaps;
+
+import interesting.dsalgos.ds.Heap;
 
 public class IntegerStreamMedian {
     private final Heap maxHeap = Heap.maxHeap(10);
     private final Heap minHeap = Heap.minHeap(10);
+
+    public static void main(String[] args) {
+        IntegerStreamMedian ism = new IntegerStreamMedian();
+        for (int num : new int[]{5, 15, 1, 3}) {
+            System.out.println(ism.addNumberAndGetMedian(num));
+        }
+    }
 
     public int addNumberAndGetMedian(int num) {
         if (minHeap.isEmpty() || minHeap.peek() < num) {
@@ -24,13 +33,6 @@ public class IntegerStreamMedian {
             } else {
                 minHeap.add(maxHeap.poll());
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        IntegerStreamMedian ism = new IntegerStreamMedian();
-        for (int num : new int[]{5, 15, 1, 3}) {
-            System.out.println(ism.addNumberAndGetMedian(num));
         }
     }
 }

@@ -1,16 +1,40 @@
-package interesting.problems.apple.heaps;
+package interesting.dsalgos.ds;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class Heap {
+    private final Comparator<Integer> comparator;
     private Integer[] heap;
     private int size;
-    private final Comparator<Integer> comparator;
 
     private Heap(int capacity, Comparator<Integer> comparator) {
         heap = new Integer[capacity];
         this.comparator = comparator;
+    }
+
+    public static Heap minHeap(int capacity) {
+        return new Heap(capacity, Comparator.comparingInt(a -> a));
+    }
+
+    public static Heap maxHeap(int capacity) {
+        return new Heap(capacity, Comparator.comparingInt(a -> -a));
+    }
+
+    public static void main(String[] args) {
+        Heap minHeap = Heap.minHeap(10);
+        for (int i = 20; i > 0; i--) {
+            minHeap.add(i);
+            minHeap.print();
+        }
+
+        for (int i = 0; i < 5; i++) {
+            System.out.println(minHeap.poll());
+            minHeap.print();
+        }
+
+        minHeap.add(5);
+        minHeap.print();
     }
 
     public void add(int number) {
@@ -70,29 +94,5 @@ public class Heap {
 
     public void print() {
         System.out.println(Arrays.asList(heap).subList(0, size));
-    }
-
-    public static Heap minHeap(int capacity) {
-        return new Heap(capacity, Comparator.comparingInt(a -> a));
-    }
-
-    public static Heap maxHeap(int capacity) {
-        return new Heap(capacity, Comparator.comparingInt(a -> -a));
-    }
-
-    public static void main(String[] args) {
-        Heap minHeap = Heap.minHeap(10);
-        for (int i = 20; i > 0; i--) {
-            minHeap.add(i);
-            minHeap.print();
-        }
-
-        for (int i = 0; i < 5; i++) {
-            System.out.println(minHeap.poll());
-            minHeap.print();
-        }
-
-        minHeap.add(5);
-        minHeap.print();
     }
 }

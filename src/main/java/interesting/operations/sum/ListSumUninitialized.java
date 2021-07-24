@@ -6,6 +6,10 @@ import java.util.List;
 
 public class ListSumUninitialized {
 
+    public static void main(String[] args) {
+        System.out.println(new ListSumUninitialized().sum(Arrays.asList(1, 2, 3), Arrays.asList(4, 5)));
+    }
+
     public List<Integer> sum(List<Integer> number1, List<Integer> number2) {
         int maxLength = Integer.max(number1.size(), number2.size()) + 1;
         int[] sum = new int[maxLength];
@@ -25,9 +29,5 @@ public class ListSumUninitialized {
             result.add(sum[i]);
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new ListSumUninitialized().sum(Arrays.asList(1, 2, 3), Arrays.asList(4, 5)));
     }
 }

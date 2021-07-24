@@ -1,6 +1,20 @@
-package interesting.problems.apple.trees;
+package interesting.problems.trees;
 
 public class MirrorBinaryTree {
+    public static void main(String[] args) {
+        TreeNode roo1 = new TreeNode(20, new TreeNode(50, new TreeNode(75), new TreeNode(25)), new TreeNode(200, null, new TreeNode(300)));
+        roo1.printInOrder();
+        System.out.println();
+        new MirrorBinaryTree().mirror(roo1).printInOrder();
+    }
+
+    public TreeNode mirror(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+        return new TreeNode(node.val, mirror(node.right), mirror(node.left));
+    }
+
     private static class TreeNode {
         int val;
         TreeNode left;
@@ -25,19 +39,5 @@ public class MirrorBinaryTree {
                 right.printInOrder();
             }
         }
-    }
-
-    public TreeNode mirror(TreeNode node) {
-        if (node == null) {
-            return null;
-        }
-        return new TreeNode(node.val, mirror(node.right), mirror(node.left));
-    }
-
-    public static void main(String[] args) {
-        TreeNode roo1 = new TreeNode(20, new TreeNode(50, new TreeNode(75), new TreeNode(25)), new TreeNode(200, null, new TreeNode(300)));
-        roo1.printInOrder();
-        System.out.println();
-        new MirrorBinaryTree().mirror(roo1).printInOrder();
     }
 }
