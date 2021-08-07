@@ -1,56 +1,48 @@
 package interesting.operations.sum;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.Collectors.toMap;
+import static java.lang.Character.forDigit;
 
 public class Base36NumSum {
-    private final Map<Character, Integer> base36ToDecimal = new TreeMap<>();
-    private final Map<Integer, Character> decimalToBase36 = new TreeMap<>();
+    private static final Map<Character, Integer> base36ToDecimal = range(0, 36).boxed().collect(toMap( Base36NumSum::toBase36, i -> i));
+    private static final Map<Integer, Character> decimalToBase36 = range(0, 36).boxed().collect(toMap( i -> i, Base36NumSum::toBase36));
 
-    public Base36NumSum() {
-        for (int i = 0; i < 10; i++) {
-            Character c = (char) ('0' + i);
-            base36ToDecimal.put(c, i);
-            decimalToBase36.put(i, c);
+    private static Character toBase36(int num) {
+        return forDigit(num, 36);
+    }
+
+    public String sum(String num1, String num2) {
+        num1 = num1.toLowerCase();
+        num2 = num2.toLowerCase();
+        StringBuilder result = new StringBuilder();
+        int carry = 0;
+        int i = num1.length() - 1, j = num2.length() - 1;
+        while (i >= 0 && j >= 0) {
+            int val = base36ToDecimal.get(num1.charAt(i--)) + base36ToDecimal.get(num2.charAt(j--)) + carry;
+            carry = val / 36;
+            result.append(decimalToBase36.get(val % 36));
         }
-        for (int i = 0; i < 26; i++) {
-            Character c = (char) ('a' + i);
-            base36ToDecimal.put(c, i + 10);
-            decimalToBase36.put(i + 10, c);
+        while (i >= 0) {
+            int val = base36ToDecimal.get(num1.charAt(i--)) + carry;
+            carry = val / 36;
+            result.append(decimalToBase36.get(val % 36));
         }
+        while (j >= 0) {
+            int val = base36ToDecimal.get(num2.charAt(j--)) + carry;
+            carry = val / 36;
+            result.append(decimalToBase36.get(val % 36));
+        }
+        if (carry > 0) {
+            result.append(decimalToBase36.get(carry));
+        }
+        return result.reverse().toString();
     }
 
     public static void main(String[] args) {
         System.out.println(new Base36NumSum().sum("abcd", "pqr"));
-    }
-
-    public String sum(String num1, String num2) {
-        int minLength = Math.min(num1.length(), num2.length());
-        String result = "";
-        int carry = 0;
-        int num1ExtraLength = num1.length() - minLength;
-        int num2ExtraLength = num2.length() - minLength;
-        for (int i = minLength - 1; i >= 0; i--) {
-            int val = base36ToDecimal.get(num1.charAt(i + num1ExtraLength)) + base36ToDecimal.get(num2.charAt(i + num2ExtraLength)) + carry;
-            carry = val / 36;
-            result = decimalToBase36.get(val % 36) + result;
-        }
-
-        if (num1ExtraLength > 0) {
-            for (int i = num1ExtraLength - 1; i >= 0; i--) {
-                System.out.println(i);
-                int val = base36ToDecimal.get(num1.charAt(i)) + carry;
-                carry = val / 36;
-                result = decimalToBase36.get(val % 36) + result;
-            }
-        }
-        if (num2ExtraLength > 0) {
-            for (int i = num2ExtraLength; i >= 0; i--) {
-                int val = base36ToDecimal.get(num1.charAt(i)) + carry;
-                carry = val / 36;
-                result = decimalToBase36.get(val % 36) + result;
-            }
-        }
-        return carry > 0 ? decimalToBase36.get(carry) + result : result;
+        System.out.println(new Base36NumSum().sum("a6t", "rt5"));
     }
 }
