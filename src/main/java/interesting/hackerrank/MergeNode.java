@@ -1,4 +1,4 @@
-package hackerrank;
+package interesting.hackerrank;
 
 import java.io.IOException;
 import java.util.Scanner;

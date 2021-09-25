@@ -1,4 +1,4 @@
-package hackerrank.warmup.ds;
+package interesting.hackerrank.warmup.ds;
 
 public class QueueFromStack {
 

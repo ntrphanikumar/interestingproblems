@@ -1,4 +1,4 @@
-package hackerrank.warmup.ds;
+package interesting.hackerrank.warmup.ds;
 
 public class PalindromeSubStrings {
     public static int findPalindromesInSubString(String input, int j, int k) {

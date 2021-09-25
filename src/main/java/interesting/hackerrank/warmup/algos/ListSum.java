@@ -1,4 +1,4 @@
-package hackerrank.warmup.algos;
+package interesting.hackerrank.warmup.algos;
 
 public class ListSum {
     public static int simpleArraySum(java.util.List<Integer> ar) {
