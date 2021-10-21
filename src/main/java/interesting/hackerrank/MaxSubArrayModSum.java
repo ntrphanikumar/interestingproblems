@@ -16,13 +16,22 @@ public class MaxSubArrayModSum {
         if (maxOfPrefixSums == m - 1) {
             return maxOfPrefixSums;
         }
-        return maxSubArraySum(a, prefixSums, m);
+        return maxSubArraySumOptimized(a, prefixSums, m);
     }
 
     private static long maxSubArraySumOptimized(List<Long> a, long[] prefixSums, long m) {
         long max = prefixSums[0];
         for (int i = 0; i < prefixSums.length; i++) {
-
+            for (int j = 0; j <= i; j++) {
+                long sum = 0;
+                if (j == i) {
+                    sum = a.get(i) % m;
+                } else {
+                    long pss = i == 0 ? 0 : prefixSums[i - 1];
+                    sum = (prefixSums[j] - pss + m) % m;
+                }
+                max = sum > max ? sum : max;
+            }
         }
         return max;
     }

@@ -115,5 +115,6 @@ public class Trie {
         trie.print();
         System.out.println(trie.removeWord("pha"));
         trie.print();
+
     }
 }
