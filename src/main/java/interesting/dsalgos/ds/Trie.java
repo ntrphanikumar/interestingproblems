@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Trie {
+public class Trie implements java.io.Serializable {
     private final TrieNode root = new TrieNode("");
 
     public void addWord(String word) {
@@ -25,7 +25,7 @@ public class Trie {
         System.out.println(root.listAllWords());
     }
 
-    private static class TrieNode {
+    private static class TrieNode implements java.io.Serializable {
         private final Map<Character, TrieNode> children = new TreeMap<>();
         private boolean isCompleteWord = false;
         private final String value;
@@ -96,6 +96,23 @@ public class Trie {
         }
     }
 
+    public static void persist(Trie trie, String file) {
+        try (java.io.ObjectOutputStream oos = new java.io.ObjectOutputStream(new java.io.FileOutputStream(file))) {
+            oos.writeObject(trie);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Trie loadFromDisk(String file) {
+        try (java.io.ObjectInputStream ois = new java.io.ObjectInputStream(new java.io.FileInputStream("dictionary.ser"))) {
+            return (interesting.dsalgos.ds.Trie) ois.readObject();
+        } catch (java.io.IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         Trie trie = new Trie();
         trie.addWord("phani");
@@ -116,5 +133,8 @@ public class Trie {
         System.out.println(trie.removeWord("pha"));
         trie.print();
 
+        persist(trie, "dictionary.ser");
+        Trie loaded = loadFromDisk("dictionary.ser");
+        loaded.print();
     }
 }
