@@ -82,7 +82,6 @@ public class MeetingTime {
                 java.util.Arrays.asList(10, 00, 13, 15),
                 java.util.Arrays.asList(9, 00, 11, 00)), 90);
 
-        java.util.Map
 //
 //        java.util.BitSet bs = new java.util.BitSet();
 //        System.out.println(bs);

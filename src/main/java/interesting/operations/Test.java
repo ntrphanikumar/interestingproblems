@@ -31,10 +31,13 @@ public class Test implements Runnable {
 
     public static void main(String[] args) {
 //        print(rotate(new int[]{1, 2, 3, 4}, 0));
-        print(rotate(new int[]{1, 2, 3, 4}, 1));
+//        print(rotate(new int[]{1, 2, 3, 4}, 1));
 //        print(rotate(new int[]{1, 2, 3, 4}, 2));
 //        print(rotate(new int[]{1, 2, 3, 4}, 3));
 //        print(rotate(new int[]{1, 2, 3, 4}, 4));
 //        print(rotate(new int[]{1, 2, 3, 4}, 5));
+
+        int x = 0x10;
+        System.out.println(x);
     }
 }
